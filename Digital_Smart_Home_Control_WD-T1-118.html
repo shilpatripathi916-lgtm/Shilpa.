@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartHome Control | WD-T1-118</title>
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#18231f;--muted:#78837f;--line:#e7ebe8;--soft:#f6f8f7;--accent:#39b982;--accent-dark:#1d8c5d}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f1f4f2;color:var(--ink);min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer}
+.app-shell{max-width:1180px;margin:28px auto;background:#fff;min-height:calc(100vh - 56px);box-shadow:0 18px 60px rgba(25,45,35,.08);border:1px solid #e6eae8}
+.topbar{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 38px}
+.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:38px;height:38px;border:1px solid #dbe5e0;border-radius:10px;display:grid;place-items:center;font-size:21px}
+.brand h1{font-size:16px;letter-spacing:-.2px}.brand p{font-size:11px;color:var(--muted);margin-top:2px}
+.header-status{font-size:12px;color:#5f6d67}.live-dot{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-right:6px}
+.dashboard{padding:44px 48px 28px}.hero{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:36px}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.6px;color:var(--accent-dark)}
+.hero h2{font-size:42px;line-height:1.08;letter-spacing:-1.6px;margin:11px 0 12px}.hero h2 em{font-style:normal;color:#63716b}
+.hero p{font-size:14px;color:var(--muted);max-width:520px;line-height:1.6}
+.date-card{border-left:1px solid var(--line);padding-left:28px;text-align:right}.date-card span,.date-card small{display:block;color:var(--muted);font-size:11px}.date-card strong{display:block;font-size:27px;letter-spacing:-1px;margin:4px 0}
+.quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.mode-card{border:1px solid var(--line);background:#fff;padding:16px;display:flex;align-items:center;gap:13px;text-align:left;transition:.2s}.mode-card:hover,.mode-card.active{border-color:#b8e7d1;background:#f5fcf8}
+.mode-icon{width:34px;height:34px;border-radius:9px;background:var(--soft);display:grid;place-items:center;font-size:16px}.mode-card.active .mode-icon{background:#dff7ea;color:var(--accent-dark)}
+.mode-card b,.mode-card small{display:block}.mode-card b{font-size:13px}.mode-card small{font-size:10px;color:var(--muted);margin-top:3px}
+.content-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:16px}
+.panel{border:1px solid var(--line);background:#fff;padding:24px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:21px}
+.step{font-size:9px;font-weight:800;letter-spacing:1.3px;color:#9aa49f}.panel h3{font-size:18px;margin-top:5px;letter-spacing:-.4px}.panel-head p{font-size:11px;color:var(--muted);margin-top:4px}.count,.secure-badge{font-size:9px;letter-spacing:.7px;font-weight:800;padding:7px 9px;border-radius:20px;background:#eef3f0;color:#68746f}.secure-badge{background:#def7e9;color:var(--accent-dark)}
+.device{display:flex;align-items:center;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.device-icon{width:36px;height:36px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:#6e7c75}.device-info{flex:1}.device-info b,.device-info small{display:block}.device-info b{font-size:12px}.device-info small{font-size:10px;color:var(--muted);margin-top:3px}
+.switch{position:relative;width:42px;height:23px}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;background:#dfe5e2;border-radius:20px;transition:.2s}.switch span:before{content:"";position:absolute;width:17px;height:17px;left:3px;top:3px;background:#fff;border-radius:50%;box-shadow:0 1px 3px #bbb;transition:.2s}.switch input:checked+span{background:var(--accent)}.switch input:checked+span:before{transform:translateX(19px)}
+.temp-display{text-align:center;padding:10px 0 13px}.temp-display span{font-size:62px;font-weight:700;letter-spacing:-3px}.temp-display sup{font-size:20px;vertical-align:top;position:relative;top:10px}.temp-display small{display:block;color:var(--muted);font-size:10px;margin-top:-4px}
+#tempSlider{width:100%;accent-color:var(--accent);margin:12px 0}.range-labels{display:flex;justify-content:space-between;color:#9aa49f;font-size:9px}.temp-buttons{display:flex;gap:9px;margin-top:18px}.temp-buttons button{flex:1;border:1px solid var(--line);background:#fafbfa;height:35px;font-size:20px;color:#4e5a55}.temp-status{font-size:10px;color:var(--muted);margin-top:17px}.temp-status span{color:var(--accent);font-size:13px;margin-right:4px}
+.security-options{display:grid;gap:9px}.security-option{display:flex;align-items:center;gap:11px;text-align:left;border:1px solid var(--line);background:#fff;padding:12px;border-radius:8px}.security-option.selected{border-color:#b8e7d1;background:#f5fcf8}.security-option>span{font-size:18px;color:#89948f}.security-option.selected>span{color:var(--accent-dark)}.security-option b,.security-option small{display:block}.security-option b{font-size:11px}.security-option small{font-size:9px;color:var(--muted);margin-top:2px}
+.summary{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}.summary div{padding:14px 0;border-bottom:1px solid var(--line)}.summary div:nth-child(odd){margin-right:15px}.summary span,.summary b{display:block}.summary span{font-size:9px;color:var(--muted)}.summary b{font-size:12px;margin-top:4px}.all-off{margin-top:18px;width:100%;border:1px solid #dfe5e2;background:#fff;padding:10px;border-radius:7px;font-size:10px;font-weight:700;color:#5b6862}.all-off:hover{background:#f5f8f6}
+footer{display:flex;justify-content:space-between;color:#9aa49f;font-size:9px;padding-top:26px}
+@media(max-width:800px){.app-shell{margin:0;border:0;min-height:100vh}.dashboard{padding:30px 20px}.topbar{padding:0 20px}.hero{align-items:flex-start;gap:20px}.hero h2{font-size:34px}.date-card{display:none}.content-grid{grid-template-columns:1fr}.quick-row{grid-template-columns:1fr}.panel{padding:20px}footer{gap:10px;flex-direction:column}}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">⌂</div>
+        <div>
+          <h1>SmartHome</h1>
+          <p>Digital Control Center</p>
+        </div>
+      </div>
+      <div class="header-status"><span class="live-dot"></span> All systems online</div>
+    </header>
+
+    <main class="dashboard">
+      <section class="hero">
+        <div>
+          <span class="eyebrow">WD-T1-118 • SMART HOME UI</span>
+          <h2>Control your home,<br><em>your way.</em></h2>
+          <p>Manage lights, temperature and security from one simple dashboard.</p>
+        </div>
+        <div class="date-card">
+          <span id="dayName">Today</span>
+          <strong id="clock">--:--</strong>
+          <small id="dateText">--</small>
+        </div>
+      </section>
+
+      <section class="quick-row">
+        <button class="mode-card active" data-mode="Home">
+          <span class="mode-icon">⌂</span><span><b>Home</b><small>Comfort mode</small></span>
+        </button>
+        <button class="mode-card" data-mode="Away">
+          <span class="mode-icon">↗</span><span><b>Away</b><small>Energy saver</small></span>
+        </button>
+        <button class="mode-card" data-mode="Night">
+          <span class="mode-icon">☾</span><span><b>Night</b><small>Sleep mode</small></span>
+        </button>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel lights-panel">
+          <div class="panel-head">
+            <div><span class="step">01</span><h3>Lighting</h3><p>Toggle lights by room.</p></div>
+            <span class="count" id="lightCount">0 / 4 ON</span>
+          </div>
+          <div class="device-list">
+            <div class="device">
+              <div class="device-icon">☀</div>
+              <div class="device-info"><b>Living Room</b><small>Main ceiling lights</small></div>
+              <label class="switch"><input type="checkbox" class="light-toggle"><span></span></label>
+            </div>
+            <div class="device">
+              <div class="device-icon">▣</div>
+              <div class="device-info"><b>Bedroom</b><small>Bedside lights</small></div>
+              <label class="switch"><input type="checkbox" class="light-toggle"><span></span></label>
+            </div>
+            <div class="device">
+              <div class="device-icon">◈</div>
+              <div class="device-info"><b>Kitchen</b><small>Counter lights</small></div>
+              <label class="switch"><input type="checkbox" class="light-toggle"><span></span></label>
+            </div>
+            <div class="device">
+              <div class="device-icon">◇</div>
+              <div class="device-info"><b>Balcony</b><small>Outdoor lights</small></div>
+              <label class="switch"><input type="checkbox" class="light-toggle"><span></span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel temp-panel">
+          <div class="panel-head">
+            <div><span class="step">02</span><h3>Temperature</h3><p>Set your preferred room temperature.</p></div>
+          </div>
+          <div class="temp-display">
+            <span id="tempValue">24</span><sup>°C</sup>
+            <small>Living Room</small>
+          </div>
+          <input id="tempSlider" type="range" min="16" max="30" value="24">
+          <div class="range-labels"><span>16°C</span><span>30°C</span></div>
+          <div class="temp-buttons">
+            <button id="minusBtn">−</button>
+            <button id="plusBtn">+</button>
+          </div>
+          <div class="temp-status"><span>●</span> AC is ready</div>
+        </section>
+
+        <section class="panel security-panel">
+          <div class="panel-head">
+            <div><span class="step">03</span><h3>Security</h3><p>Protect your home with one tap.</p></div>
+            <span class="secure-badge" id="securityBadge">SECURE</span>
+          </div>
+          <div class="security-options">
+            <button class="security-option selected" data-security="Armed">
+              <span>◉</span><div><b>Armed</b><small>All sensors active</small></div>
+            </button>
+            <button class="security-option" data-security="Disarmed">
+              <span>○</span><div><b>Disarmed</b><small>Security paused</small></div>
+            </button>
+            <button class="security-option" data-security="Sleep">
+              <span>◐</span><div><b>Sleep</b><small>Doors & windows monitored</small></div>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel summary-panel">
+          <div class="panel-head">
+            <div><span class="step">04</span><h3>Home Summary</h3><p>Your current smart-home status.</p></div>
+          </div>
+          <div class="summary">
+            <div><span>Current mode</span><b id="modeText">Home</b></div>
+            <div><span>Lights</span><b id="summaryLights">0 active</b></div>
+            <div><span>Temperature</span><b id="summaryTemp">24°C</b></div>
+            <div><span>Security</span><b id="summarySecurity">Armed</b></div>
+          </div>
+          <button class="all-off" id="allOff">Turn All Lights Off</button>
+        </section>
+      </div>
+
+      <footer>
+        <span>Digital Smart Home Control UI</span>
+        <span>Interactive • Responsive • Browser based</span>
+      </footer>
+    </main>
+  </div>
+  <script>
+const lights = [...document.querySelectorAll('.light-toggle')];
+const lightCount = document.getElementById('lightCount');
+const summaryLights = document.getElementById('summaryLights');
+const tempSlider = document.getElementById('tempSlider');
+const tempValue = document.getElementById('tempValue');
+const summaryTemp = document.getElementById('summaryTemp');
+const modeText = document.getElementById('modeText');
+const summarySecurity = document.getElementById('summarySecurity');
+const securityBadge = document.getElementById('securityBadge');
+
+function updateLights(){
+  const on = lights.filter(x => x.checked).length;
+  lightCount.textContent = `${on} / ${lights.length} ON`;
+  summaryLights.textContent = `${on} active`;
+  localStorage.setItem('smartLights', JSON.stringify(lights.map(x => x.checked)));
+}
+function setTemp(v){
+  const value = Math.max(16, Math.min(30, Number(v)));
+  tempSlider.value = value;
+  tempValue.textContent = value;
+  summaryTemp.textContent = `${value}°C`;
+  localStorage.setItem('smartTemp', value);
+}
+lights.forEach(x => x.addEventListener('change', updateLights));
+tempSlider.addEventListener('input', e => setTemp(e.target.value));
+document.getElementById('minusBtn').addEventListener('click', () => setTemp(+tempSlider.value - 1));
+document.getElementById('plusBtn').addEventListener('click', () => setTemp(+tempSlider.value + 1));
+document.getElementById('allOff').addEventListener('click', () => { lights.forEach(x => x.checked=false); updateLights(); });
+
+document.querySelectorAll('.mode-card').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-card').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    modeText.textContent = btn.dataset.mode;
+    localStorage.setItem('smartMode', btn.dataset.mode);
+  });
+});
+
+document.querySelectorAll('.security-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.security-option').forEach(x => x.classList.remove('selected'));
+    btn.classList.add('selected');
+    const value = btn.dataset.security;
+    summarySecurity.textContent = value;
+    securityBadge.textContent = value === 'Disarmed' ? 'NOT SECURE' : 'SECURE';
+    securityBadge.style.background = value === 'Disarmed' ? '#f5e8e8' : '#def7e9';
+    securityBadge.style.color = value === 'Disarmed' ? '#a24e4e' : '#1d8c5d';
+    localStorage.setItem('smartSecurity', value);
+  });
+});
+
+function clock(){
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('dayName').textContent = d.toLocaleDateString([], {weekday:'long'});
+  document.getElementById('dateText').textContent = d.toLocaleDateString([], {day:'2-digit', month:'short', year:'numeric'});
+}
+clock(); setInterval(clock, 1000);
+
+const savedLights = JSON.parse(localStorage.getItem('smartLights') || 'null');
+if(savedLights) lights.forEach((x,i) => x.checked = !!savedLights[i]);
+setTemp(localStorage.getItem('smartTemp') || 24);
+if(localStorage.getItem('smartMode')){
+  const m = localStorage.getItem('smartMode');
+  const btn = document.querySelector(`[data-mode="${m}"]`);
+  if(btn){ document.querySelectorAll('.mode-card').forEach(x=>x.classList.remove('active')); btn.classList.add('active'); modeText.textContent=m; }
+}
+if(localStorage.getItem('smartSecurity')){
+  const s = localStorage.getItem('smartSecurity');
+  const btn = document.querySelector(`[data-security="${s}"]`);
+  if(btn) btn.click();
+}
+updateLights();
+
+</script>
+</body>
+</html>
